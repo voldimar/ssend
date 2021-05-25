@@ -17,7 +17,6 @@ func main() {
 
 	godotenv.Load(os.Getenv("HOME") + "/.ssend")
 	godotenv.Load()
-	log.Info(os.Getenv("SENTRY_DSN"), os.Getenv("HOME"))
 	err := sentry.Init(sentry.ClientOptions{
 		Dsn:   os.Getenv("SENTRY_DSN"),
 		Debug: true,
@@ -26,6 +25,12 @@ func main() {
 		log.Fatalf("sentry.Init: %s", err)
 	}
 	defer sentry.Flush(2 * time.Second)
-
-	sentry.CaptureMessage(strings.Join(os.Args[1:], " "))
+	hostname, err := os.Hostname()
+	if err != nil {
+		hostname = "Unknown host"
+	}
+	log.Info(hostname)
+	message := hostname + ": " + strings.Join(os.Args[1:], " ")
+	log.Info(message)
+	sentry.CaptureMessage(message)
 }
