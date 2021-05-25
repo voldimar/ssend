@@ -1,17 +1,25 @@
 package main
 
 import (
-	"log"
 	"os"
 	"strings"
 	"time"
 
 	"github.com/getsentry/sentry-go"
+	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
 )
 
+var log = logrus.New()
+
 func main() {
+	log.SetLevel(logrus.InfoLevel)
+
+	godotenv.Load(os.Getenv("HOME") + "/.ssend")
+	godotenv.Load()
+	log.Info(os.Getenv("SENTRY_DSN"), os.Getenv("HOME"))
 	err := sentry.Init(sentry.ClientOptions{
-		Dsn:   "https://dbe0d18ea06a4c7eac9f06ebf5dfaf45:0a47b933c9c74bbab720537a139140d3@log.gosp.cloud/2",
+		Dsn:   os.Getenv("SENTRY_DSN"),
 		Debug: true,
 	})
 	if err != nil {
